@@ -1,0 +1,4 @@
+"0","# your code here"
+"0","ggplot(happiness, mapping=aes(x=Explained.by..Log.GDP.per.capita, y=Ladder.score))+"
+"0","  geom_point()"
+"0",""

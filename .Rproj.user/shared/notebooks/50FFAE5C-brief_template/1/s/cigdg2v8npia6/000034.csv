@@ -1,0 +1,7 @@
+"0","library(dplyr)"
+"0","library(ggplot2)"
+"0","happiness_sorted <- happiness %>% "
+"0","  arrange(desc(Ladder.score))"
+"0",""
+"0","ggplot(head(happiness_sorted, 5), mapping=aes(x=reorder(Country.name, desc(Ladder.score)), y=Ladder.score))+"
+"0","  geom_col(aes(col=Country.name, fill=Country.name))"
