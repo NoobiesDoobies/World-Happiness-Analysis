@@ -1,5 +1,0 @@
-"0","  "
-"0",""
-"0","ggplot(tail(happiness_sorted, 5), mapping=aes(x=reorder(Country.name, desc(Ladder.score)), y=Ladder.score))+"
-"0","  geom_col(aes(col=Country.name, fill=Country.name))"
-"0",""

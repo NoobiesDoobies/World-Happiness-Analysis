@@ -75,20 +75,84 @@ Buat plot yang akan dimasukkan ke dalam dashboard. Boleh dalam bentuk `ggplot` m
 **Jawab**
 
 ## Plot untuk menjawab tujuan pertama: Menunjukkan top5 negara dengan tingkat kebahagiaan tertinggi dan terendah
+```{r}
+
+col.names <- c("Country", "Region", "Ladder_Score", 
+               "Standard_Error",
+               "Upperwhisker", "Lowerwhisker", "Log_GDP",
+               "Social_Support", "Healthy_Life_Expectancy",
+               "Freedom_to_Make_Life_Choices", "Generosity",
+               "Perception_of_Corruption",
+               "Ladder_Score_in_Dystopia", "Explained_by_Log_GDP",
+               "Explained_by_Social_Support", 
+               "Explained_by_Healthy_Life_Expectancy",
+               "Explained_by_Freedom_to_Make Life_Choices",
+               "Explained_by_Generosity",
+               "Explained_by_Perception_of_Corruption",
+               "Dystopia_Residuall")
+
+
+names(happiness) <- col.names
+
+
+happiness
+```
 
 
 ```{r}
 library(dplyr)
 library(ggplot2)
+library(ggdark)
+library(glue)
+library(plotly)
 happiness_sorted <- happiness %>% 
-  arrange(desc(Ladder.score))
+  arrange(desc(Ladder_Score)) %>% 
+  mutate(label = glue("Country: {Country}
+                      Happiness Score:  {round(Ladder_Score, 2)}"))
 
-ggplot(head(happiness_sorted, 5), mapping=aes(x=reorder(Country.name, desc(Ladder.score)), y=Ladder.score))+
-  geom_col(aes(col=Country.name, fill=Country.name))
+colors <- c("#ffd89b", "#19547b")
+
+theme_black<- function (base_size = 16, base_family = ""){
+    theme_minimal() %+replace% 
+        theme(
+              line = element_line(colour = "white", size = 0.5, linetype = 1, 
+                        lineend = "butt"), 
+              rect = element_rect(fill = "white", 
+                        colour = "white", size = 0.5, linetype = 1), 
+              text = element_text(family = base_family, 
+                        face = "plain", colour = "white", size = base_size,
+                        angle = 0, lineheight = 0.9, hjust = 0, vjust = 0),
+              plot.background = element_rect(fill = 'black'),
+              plot.title = element_text(size = rel(1.2)),
+              panel.border = element_rect(fill = NA, colour = NA), 
+              panel.grid.major = element_line(colour = "grey20"), 
+              panel.grid.minor = element_line(colour = NA),
+              strip.background = element_rect(fill = "grey30", colour = "grey30"),
+              axis.text.x = element_text(family=base_family, colour="white"),
+              axis.text.y = element_text(family=base_family, colour="white", hjust=1, vjust=0.5),
+              title = element_text(family=base_family, colour="white", size=12, hjust=0.5)
+              
+             )
+    }
+
+plot <- ggplot(rbind(head(happiness_sorted, 5),  tail(happiness_sorted,5)), mapping=aes(x=reorder(Country, Ladder_Score), y=Ladder_Score, text=label))+
+  geom_col(aes(fill=Ladder_Score))+
+  scale_fill_gradientn(colors=colors)+
+  coord_flip()+
+  labs(
+    title="Top 5 Happiest and Unhappiest\nCountry In the World",
+    y="Happiness",
+    x="",
+    fill="Happiness Score"
+  )+
+  theme_black()
   
+color = "rgba(0, 0, 0, 1)"
 
-ggplot(tail(happiness_sorted, 5), mapping=aes(x=reorder(Country.name, desc(Ladder.score)), y=Ladder.score))+
-  geom_col(aes(col=Country.name, fill=Country.name))
+ggplotly(plot, tooltip="text") %>% layout(
+           plot_bgcolor  = color,
+           paper_bgcolor = color
+           )
 
 ```
 
@@ -99,20 +163,77 @@ Note for future self: Pilih warna yang lebih bagus
 ```{r}
 # your code here
 library(reshape)
-happiness_numeric <- happiness %>% 
+
+
+
+happiness2 <- happiness
+col.names2 <- c("Country", "Region", "Ladder Score", 
+               "Standard Error",
+               "Upperwhisker", "Lowerwhisker", "Log GDP",
+               "Social Support", "Healthy Life Expectancy",
+               "Freedom to Make Life Choices", "Generosity",
+               "Perception of Corruption",
+               "Ladder Score in Dystopia", "Explained by Log GDP",
+               "Explained by Social Support", 
+               "Explained by Healthy Life Expectancy",
+               "Explained by Freedom to Make Life Choices",
+               "Explained by Generosity",
+               "Explained by Perception of Corruption",
+               "Dystopia Residuall")
+names(happiness2) <- col.names2
+
+col.names3 <- c("Ladder Score", 
+                "Log GDP",
+               "Social Support", "Healthy Life Expectancy",
+               "Freedom to Make Life Choices", "Generosity",
+               "Perception of Corruption",
+               "Ladder Score in Dystopia", "Explained by Log GDP",
+               "Explained by Social Support", 
+               "Explained by Healthy Life Expectancy",
+               "Explained by Freedom to Make Life Choices",
+               "Explained by Generosity",
+               "Explained by Perception of Corruption",
+               "Dystopia Residuall")
+
+happiness_numeric <- happiness2 %>% 
   select_if(is.numeric) %>% 
-  select(-c(Standard.error.of.ladder.score, upperwhisker, lowerwhisker))
-
-
+  select(-c("Standard Error", Upperwhisker, Lowerwhisker))
 
 
 happiness_corr <- data.frame(cor(happiness_numeric))
+names(happiness_corr) <- col.names3
 happiness_corr$id <- row.names(happiness_corr)
 happiness_corr <- melt(happiness_corr, id.vars="id")
 
-ggplot(happiness_corr, mapping=aes(id, variable, fill=value))+
-  geom_tile()+
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+happiness_corr <- happiness_corr %>% 
+  filter(variable=="Ladder Score") %>% 
+  replace(is.na(.), 0) %>% 
+  filter(id!="Ladder Score")
+
+happiness_corr <- happiness_corr %>% 
+  mutate(label = glue("{id}
+                      Correlation Value:  {round(value, 2)}"))
+
+
+options(repr.plot.width =20, repr.plot.height =9)
+plot2<-ggplot(happiness_corr, mapping=aes(x=id, y=value, fill=value, text=label))+
+  geom_col()+
+  labs(
+    title="Correlation with Happiness",
+    x="",
+    y=""
+  )+
+  scale_fill_gradientn(colors=colors,
+                       limits=c(-1,1))+  
+  scale_y_discrete(labels=c("test,"))+
+  theme_black()+
+  ylim(-1,1)+
+  coord_flip()
+
+ggplotly(plot2, tooltip="text") %>% layout(
+           plot_bgcolor  = color,
+           paper_bgcolor = color
+           )
 ```
 
 Note for future self: Heatmap bewarna abu mungkin karena ada data yang null (butuh data cleansing terlebih dahulu), grafik penyok (perlu diperbaiki)
@@ -122,10 +243,35 @@ Note for future self: Heatmap bewarna abu mungkin karena ada data yang null (but
 
 ```{r}
 # your code here
-ggplot(happiness, mapping=aes(x=Explained.by..Log.GDP.per.capita, y=Ladder.score))+
-  geom_point()
+
+
+col="Explained by Log GDP"
+col2 <- gsub(" ", "_", col)
+
+colors <- c("#ffd89b", "#19547b")
+ggplot(happiness, mapping=aes(x=get(col2), y=Ladder_Score))+
+  geom_point(aes(col=Ladder_Score))+
+  scale_color_gradientn(colors=colors)+
+  theme_black()+
+  geom_smooth(method = "lm", col="white")+
+  labs(
+    title=paste("Correlation Between", col, " and Happiness"),
+    x=col,
+    y="",
+    col="Happiness Score"
+  )
+
+
 
 ```
+
+```{r}
+happiness %>% 
+                    arrange(desc(Ladder_Score)) %>% 
+                    top_n(1, Ladder_Score) %>% 
+                    select(Country)
+```
+
 
 Note for future self: Boleh tambah garis korelasi
 
@@ -147,6 +293,41 @@ ggplot(rbind(happiness_cap, happiness_sos), mapping=aes(reorder(Country.name, de
 ```
 Note for future self: Bisa bikin pembatas antara negara kapitalis vs sosialis (warna bagusnya).
 
+```{r}
+happiness$Country <- replace(happiness$Country, happiness$Country == "United States", "USA")
+happiness$Country <- replace(happiness$Country, happiness$Country == "Congo (Brazzaville)", "Democratic Republic of the Congo")
+
+
+world_map <- map_data("world")
+
+world_map <- merge(world_map, happiness, by.x="region", by.y="Country")
+
+world_map <- world_map[order(world_map$group, world_map$order),]
+
+world_map <- world_map %>% 
+  mutate(label = glue("Country: {region}
+                      Happiness Score:  {round(Ladder_Score, 2)}"))
+
+plot3<- ggplot(world_map, aes(x=long, y=lat, group=group, text=label))+
+  geom_polygon(aes(fill=Ladder_Score), color="black")+
+  scale_fill_gradientn(colors=colors)+
+  labs(
+    x="",
+    y="",
+    fill="Happiness Score"
+  )+
+  theme_black()+
+  theme(axis.text.x = element_blank(),
+        axis.text.y = element_blank())
+
+
+
+ggplotly(plot3, tooltip="text") %>% layout(
+           plot_bgcolor  = color,
+           paper_bgcolor = color
+           )
+
+```
 
 # Where
 

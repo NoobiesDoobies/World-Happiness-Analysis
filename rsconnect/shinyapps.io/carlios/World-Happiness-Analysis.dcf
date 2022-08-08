@@ -1,0 +1,13 @@
+name: World-Happiness-Analysis
+title: World-Happiness-Analysis
+username:
+account: carlios
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 6750404
+bundleId: 6177808
+url: https://carlios.shinyapps.io/World-Happiness-Analysis/
+when: 1659923796.61408
+lastSyncTime: 1659923796.6141
+asMultiple: FALSE
+asStatic: FALSE
