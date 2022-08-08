@@ -159,7 +159,11 @@ fluidPage(
 
 
 
-          a(href='https://www.kaggle.com/datasets/unsdsn/world-happiness', "Link to data")
+          a(href='https://www.kaggle.com/datasets/unsdsn/world-happiness', "Link to data"),
+          
+          p(),
+          
+          p("By Carlios Eryan")
         ),
         tabItem(
 

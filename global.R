@@ -15,7 +15,7 @@ library(shiny)
 library(shinydashboard)
 library(DT) # datatable
 library(reshape)
-library(fresh)
+
 
 
 happiness <- read.csv("world-happiness-report-2021.csv")
@@ -45,28 +45,26 @@ happiness_sorted <- happiness %>%
 
 colors <- c("#ffd89b", "#19547b")
 color <- "rgba(0, 0, 0, 1)"
-
 theme_black<- function (base_size = 16, base_family = ""){
-  theme_minimal() %+replace%
+  theme_minimal() %+replace% 
     theme(
-      line = element_line(colour = "white", size = 0.5, linetype = 1,
-                          lineend = "butt"),
-      rect = element_rect(fill = "white",
-                          colour = "white", size = 0.5, linetype = 1),
-      text = element_text(family = base_family,
+      line = element_line(colour = "white", size = 0.5, linetype = 1, 
+                          lineend = "butt"), 
+      rect = element_rect(fill = "white", 
+                          colour = "white", size = 0.5, linetype = 1), 
+      text = element_text(family = base_family, 
                           face = "plain", colour = "white", size = base_size,
                           angle = 0, lineheight = 0.9, hjust = 0, vjust = 0),
-      plot.background = element_rect(col="black", fill = 'black'),
+      plot.background = element_rect(fill = 'black'),
       plot.title = element_text(size = rel(1.2)),
-      panel.border = element_rect(fill = NA, colour = NA),
-      panel.grid.major = element_line(colour = "grey20"),
+      panel.border = element_rect(fill = NA, colour = NA), 
+      panel.grid.major = element_line(colour = "grey20"), 
       panel.grid.minor = element_line(colour = NA),
       strip.background = element_rect(fill = "grey30", colour = "grey30"),
       axis.text.x = element_text(family=base_family, colour="white"),
-      axis.text.y = element_text(family=base_family, colour="white", hjust=0.95, vjust=0.5),
-      title = element_text(family=base_family, colour="white", size=10, hjust=0.5),
-      panel.background=element_rect(colour="black")
-
+      axis.text.y = element_text(family=base_family, colour="white", hjust=1, vjust=0.5),
+      title = element_text(family=base_family, colour="white", size=12, hjust=0.5)
+      
     )
 }
 

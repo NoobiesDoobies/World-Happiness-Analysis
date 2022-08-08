@@ -59,7 +59,7 @@ shinyServer(function(input, output) {
       col2 <- gsub(" ", "_", col)
 
       colors <- c("#ffd89b", "#19547b")
-      plot3 <- ggplot(happiness, mapping=aes(x=get(col2), y=Ladder_Score))+
+      plot4 <- ggplot(happiness, mapping=aes(x=get(col2), y=Ladder_Score), text="")+
         geom_point(aes(col=Ladder_Score))+
         scale_color_gradientn(colors=colors)+
         geom_smooth(method = "lm", se = FALSE, col="white")+
@@ -70,8 +70,8 @@ shinyServer(function(input, output) {
           col="Happiness Score"
         )+
         theme_black()
-      
-      ggplotly(plot3)%>% layout(
+      color = "rgba(0, 0, 0, 1)"
+      ggplotly(plot4, tooltip="text")%>% layout(
         plot_bgcolor  = color,
         paper_bgcolor = color
       )
