@@ -5,9 +5,9 @@ account: carlios
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 6750404
-bundleId: 6177808
+bundleId: 6178214
 url: https://carlios.shinyapps.io/World-Happiness-Analysis/
-when: 1659923796.61408
-lastSyncTime: 1659923796.6141
+when: 1659932159.31661
+lastSyncTime: 1659932159.31663
 asMultiple: FALSE
 asStatic: FALSE
